@@ -1,12 +1,12 @@
 [
   {
     "symbol": "NVDA",
-    "price": 73.41,
+    "price": 230.41,
     "note": "מחיר שהוגדר להתראה"
   },
   {
     "symbol": "AAPL",
-    "price": 230.00,
+    "price": 320.00,
     "note": "יעד עליון"
   }
 ]
