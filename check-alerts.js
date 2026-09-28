@@ -5,7 +5,7 @@ const FINNHUB_KEY = process.env.FINNHUB_KEY;
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
-async function getPrice(symbol) {
+function getPrice(symbol) {
   return new Promise((resolve, reject) => {
     const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_KEY}`;
     https.get(url, (res) => {
@@ -14,7 +14,11 @@ async function getPrice(symbol) {
       res.on('end', () => {
         try {
           const json = JSON.parse(data);
-          resolve(json.c); // current price
+          if (json.c === 0 || !json.c) {
+            reject(new Error(`No price for ${symbol}`));
+          } else {
+            resolve(json.c);
+          }
         } catch (e) {
           reject(e);
         }
@@ -23,11 +27,12 @@ async function getPrice(symbol) {
   });
 }
 
-async function sendTelegram(text) {
+function sendTelegram(text) {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   const body = JSON.stringify({
     chat_id: CHAT_ID,
-    text: text
+    text: text,
+    parse_mode: 'HTML'
   });
 
   return new Promise((resolve, reject) => {
@@ -38,8 +43,9 @@ async function sendTelegram(text) {
         'Content-Length': Buffer.byteLength(body)
       }
     }, (res) => {
-      res.on('data', () => {});
-      res.on('end', resolve);
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve(data));
     });
     req.on('error', reject);
     req.write(body);
@@ -48,18 +54,29 @@ async function sendTelegram(text) {
 }
 
 async function main() {
-  const alerts = JSON.parse(fs.readFileSync('alerts.json', 'utf8'));
-  
+  let alerts;
+  try {
+    alerts = JSON.parse(fs.readFileSync('alerts.json', 'utf8'));
+  } catch (e) {
+    console.error('Failed to read alerts.json:', e.message);
+    return;
+  }
+
+  console.log(`Checking ${alerts.length} alerts...`);
+
   for (const alert of alerts) {
     try {
       const currentPrice = await getPrice(alert.symbol);
-      console.log(`${alert.symbol}: ${currentPrice}`);
+      console.log(`${alert.symbol}: current = ${currentPrice}, target = ${alert.price}`);
 
-      // פשוט Crossing – אם המחיר עבר את היעד (בקירוב)
-      if (Math.abs(currentPrice - alert.price) < 0.15) {
-        const message = `🚨 Price Alert\n${alert.symbol} Crossing ${alert.price} (${alert.note || 'מחיר שהוגדר להתראה'})`;
+      // שולח התראה אם המחיר עבר את היעד (עם מרווח קטן)
+      const diff = Math.abs(currentPrice - alert.price);
+      if (diff < (alert.price * 0.005) || diff < 0.5) {  // 0.5% או 0.5 דולר
+        const message = `🚨 Price Alert\n${alert.symbol} Crossing ${alert.price} (${alert.note || 'מחיר שהוגדר להתראה'})\nCurrent: $${currentPrice.toFixed(2)}`;
         await sendTelegram(message);
-        console.log('Alert sent:', message);
+        console.log('✅ Alert sent for', alert.symbol);
+      } else {
+        console.log(`No trigger for ${alert.symbol} (diff = ${diff.toFixed(2)})`);
       }
     } catch (err) {
       console.error(`Error with ${alert.symbol}:`, err.message);
