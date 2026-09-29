@@ -2,12 +2,15 @@ name: Price Alerts
 
 on:
   schedule:
-    - cron: '*/5 * * * *'   # רץ כל 5 דקות
-  workflow_dispatch:         # אפשרות להריץ ידנית
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # חשוב! כדי שיוכל לעדכן את state.json
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,3 +25,11 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
         run: node check-alerts.js
+
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add state.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update state.json"
+          git push
