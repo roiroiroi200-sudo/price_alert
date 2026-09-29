@@ -1,7 +1,13 @@
 [
   {
     "symbol": "NVDA",
-    "price": 228.03,
+    "price": 227.82,
+    "direction": "both",
+    "note": ""
+  },
+  {
+    "symbol": "AMZN",
+    "price": 247,
     "direction": "both",
     "note": ""
   }
