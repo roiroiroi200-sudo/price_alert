@@ -1,19 +1,7 @@
 [
   {
     "symbol": "MSTR",
-    "price": 154.1,
-    "direction": "below",
-    "note": ""
-  },
-  {
-    "symbol": "AMZN",
-    "price": 247.3,
-    "direction": "above",
-    "note": ""
-  },
-  {
-    "symbol": "NVDA",
-    "price": 228,
+    "price": 153.8,
     "direction": "below",
     "note": ""
   }
