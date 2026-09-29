@@ -1,12 +1,13 @@
 [
   {
-    "symbol": "NVDA",
-    "price": 230.41,
-    "note": "××××¨ ×©×××××¨ ×××ª×¨××"
-  },
-  {
     "symbol": "AMZN",
     "price": 248,
     "note": "××¢× ×¢××××"
+  },
+  {
+    "symbol": "NVDA",
+    "price": 227,
+    "direction": "below",
+    "note": ""
   }
 ]
