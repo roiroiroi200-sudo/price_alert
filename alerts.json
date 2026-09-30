@@ -10,5 +10,11 @@
     "price": 247,
     "direction": "both",
     "note": ""
+  },
+  {
+    "symbol": "BTC",
+    "price": 83000,
+    "direction": "both",
+    "note": ""
   }
 ]
