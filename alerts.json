@@ -1,19 +1,13 @@
 [
   {
-    "symbol": "NVDA",
-    "price": 227.82,
-    "direction": "both",
-    "note": ""
-  },
-  {
     "symbol": "AMZN",
-    "price": 247,
+    "price": 245,
     "direction": "both",
     "note": ""
   },
   {
-    "symbol": "BTC",
-    "price": 83000,
+    "symbol": "NVDA",
+    "price": 228,
     "direction": "both",
     "note": ""
   }
