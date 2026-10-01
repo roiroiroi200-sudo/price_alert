@@ -10,5 +10,11 @@
     "price": 228,
     "direction": "both",
     "note": ""
+  },
+  {
+    "symbol": "META",
+    "price": 727,
+    "direction": "both",
+    "note": ""
   }
 ]
